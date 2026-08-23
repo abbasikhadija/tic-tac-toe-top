@@ -1,23 +1,19 @@
-function gameBoard(){
+function gameBoard(){ // factory for the board
     const gameBoard=[["","",""],
                     ["","",""],
                     ["","",""]];
     return gameBoard;
 }
-function player(name){
+function player(name){ // object for player 
   this.name=name;
   this.turn=false;
   this.score=0;
   this.mark="";
 
-
-    
-    
-
 }
-function round(player1,player2,board){
+function round(player1,player2,board){ // round called in game manager and player and board are created there 
   let emptyTile=9;
-  let haveWinner=false;
+  let haveWinner=false; 
   let winner;
   player1.turn=!player2.turn; // logic to turn only one players turn 
   let currentPlayer=player1;  // to have starting player 
@@ -77,14 +73,63 @@ function round(player1,player2,board){
 
 
 }
-function gameManager(){
-  let player1= new player("khadija");
-  let player2= new player("Sultan");
-  player1.mark="x";
-  player2.mark="o";
-  let board= gameBoard();
-  // place the logic of tie and best of three or best of five 
-  round(player1,player2,board);
+function gameManager() {
+  let player1 = new player("khadija");
+  let player2 = new player("Sultan");
+  player1.mark = "x";
+  player2.mark = "o";
 
+  let currentRound = 1;
+  let maxRounds = 3; // Starts as Best of 3
+  let matchOver = false;
+
+  console.log(`Starting Tic-Tac-Toe: ${player1.name} vs ${player2.name}`);
+
+  while (currentRound <= maxRounds && !matchOver) {
+    console.log(`\n--- ROUND ${currentRound} of ${maxRounds} ---`);
+    
+    // Create a fresh board for each round
+    let board = gameBoard();
+
+    // Play one round (updates scores inside player objects)
+    round(player1, player2, board);
+
+    // Display running score
+    console.log(`Current Score: ${player1.name}: ${player1.score} | ${player2.name}: ${player2.score}`);
+
+    // Check Best-of-3 conditions
+    if (maxRounds === 3) {
+      if (player1.score === 2 || player2.score === 2) {
+        matchOver = true;
+        break;
+      }
+      
+      // If tied after 3 rounds, extend to Best of 5
+      if (currentRound === 3 && player1.score === player2.score) {
+        console.log("\n>>> Tied after 3 rounds! Extending match to Best of 5! <<<");
+        maxRounds = 5;
+      }
+    }
+
+    // Check Best-of-5 conditions
+    if (maxRounds === 5) {
+      if (player1.score === 3 || player2.score === 3) {
+        matchOver = true;
+        break;
+      }
+    }
+
+    currentRound++;
+  }
+
+  // --- Final Match Result ---
+  console.log("\n===========================");
+  if (player1.score > player2.score) {
+    console.log(`🏆 MATCH WINNER: ${player1.name} (${player1.score} - ${player2.score})`);
+  } else if (player2.score > player1.score) {
+    console.log(`🏆 MATCH WINNER: ${player2.name} (${player2.score} - ${player1.score})`);
+  } else {
+    console.log(`🤝 THE MATCH IS A DRAW! (${player1.score} - ${player2.score})`);
+  }
+  console.log("===========================");
 }
-
