@@ -1,13 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic-Tac-Toe</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
-</body>
 
+  <div class="game-container">
+    <h1>Tic-Tac-Toe</h1>
+
+    <!-- Player Name Entry Form -->
+    <section id="player-setup" class="setup-screen">
+      <h2>Enter Player Names</h2>
+      <div class="input-group">
+        <label for="player1-name">Player 1 (X):</label>
+        <input type="text" id="player1-name" placeholder="player...." required>
+      </div>
+      <div class="input-group">
+        <label for="player2-name">Player 2 (O):</label>
+        <input type="text" id="player2-name" placeholder="player..." required>
+      </div>
+      <button id="start-btn" class="btn">Start Game</button>
+    </section>
+
+    <!-- Main Game Section (Hidden by default until start) -->
+    <section id="game-screen" class="game-screen hidden">
+      
+      <!-- Score & Status Board -->
+      <div class="scoreboard">
+        <div class="player-card" id="p1-card">
+          <span id="p1-display-name">Player 1</span>
+          <span class="score" id="p1-score">0</span>
+        </div>
+        <div class="match-info">
+          <span id="round-info">Round 1</span>
+          <span id="status-message">X's Turn</span>
+        </div>
+        <div class="player-card" id="p2-card">
+          <span id="p2-display-name">Player 2</span>
+          <span class="score" id="p2-score">0</span>
+        </div>
+      </div>
+
+      <!-- 3x3 Grid Board -->
+      <div id="board" class="board">
+        <button class="tile" id="tile-0-0" data-row="0" data-col="0"></button>
+        <button class="tile" id="tile-0-1" data-row="0" data-col="1"></button>
+        <button class="tile" id="tile-0-2" data-row="0" data-col="2"></button>
+
+        <button class="tile" id="tile-1-0" data-row="1" data-col="0"></button>
+        <button class="tile" id="tile-1-1" data-row="1" data-col="1"></button>
+        <button class="tile" id="tile-1-2" data-row="1" data-col="2"></button>
+
+        <button class="tile" id="tile-2-0" data-row="2" data-col="0"></button>
+        <button class="tile" id="tile-2-1" data-row="2" data-col="1"></button>
+        <button class="tile" id="tile-2-2" data-row="2" data-col="2"></button>
+      </div>
+
+      <button id="reset-btn" class="btn secondary">Reset Game</button>
+    </section>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
 </html>

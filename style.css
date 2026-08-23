@@ -1,0 +1,164 @@
+:root {
+  --bg-color: #1a1a24;
+  --card-bg: #242538;
+  --accent-x: #ff4757;
+  --accent-o: #2ed573;
+  --text-color: #ffffff;
+  --text-muted: #a4b0be;
+  --border-radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-container {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  letter-spacing: 1px;
+}
+
+/* Setup Form */
+.setup-screen .input-group {
+  margin-bottom: 1.2rem;
+  text-align: left;
+}
+
+.setup-screen label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.setup-screen input {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #3d3e53;
+  background: #1a1a24;
+  color: white;
+  font-size: 1rem;
+}
+
+/* Buttons */
+.btn {
+  width: 100%;
+  padding: 0.9rem;
+  background: #5352ed;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn:hover {
+  background: #3742fa;
+}
+
+.btn.secondary {
+  background: transparent;
+  border: 1px solid #3d3e53;
+  margin-top: 1.5rem;
+}
+
+.btn.secondary:hover {
+  background: #1a1a24;
+}
+
+/* Hidden Utility Class */
+.hidden {
+  display: none !important;
+}
+
+/* Scoreboard */
+.scoreboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  background: #1a1a24;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.player-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.player-card .score {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 0.2rem;
+}
+
+.match-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* 3x3 Grid */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  margin: 0 auto;
+}
+
+.tile {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #1a1a24;
+  border: 2px solid #3d3e53;
+  border-radius: 8px;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: border-color 0.2s ease;
+}
+
+.tile:hover {
+  border-color: #5352ed;
+}
+
+/* Mark Colors (Added dynamically by JS) */
+.tile.x-mark {
+  color: var(--accent-x);
+}
+
+.tile.o-mark {
+  color: var(--accent-o);
+}

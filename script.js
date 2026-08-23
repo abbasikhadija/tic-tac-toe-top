@@ -1,135 +1,202 @@
-function gameBoard(){ // factory for the board
+// --- Your original constructors ---
+function gameBoard(){
     const gameBoard=[["","",""],
                     ["","",""],
                     ["","",""]];
     return gameBoard;
 }
-function player(name){ // object for player 
+
+function player(name){
   this.name=name;
   this.turn=false;
   this.score=0;
   this.mark="";
-
 }
-function round(player1,player2,board){ // round called in game manager and player and board are created there 
-  let emptyTile=9;
-  let haveWinner=false; 
+
+// --- DOM Connected Round Logic ---
+function round(player1, player2, board, onRoundEnd) {
+  let emptyTile = 9;
+  let haveWinner = false;
   let winner;
-  player1.turn=!player2.turn; // logic to turn only one players turn 
-  let currentPlayer=player1;  // to have starting player 
   
-  while(emptyTile > 0 && !haveWinner){ // loop runns untill we have a tie or a winner it stops only when the bord is full with no winner or a winner 
-    turn(board);
+  player1.turn = true;
+  player2.turn = false;
+  let currentPlayer = player1;  
+
+  // Get UI elements
+  const statusMessage = document.getElementById("status-message");
+  const tiles = document.querySelectorAll(".tile");
+
+  // Initial turn text
+  statusMessage.textContent = `${currentPlayer.name}'s (${currentPlayer.mark}) Turn`;
+
+  // Attach click events to the HTML tiles
+  tiles.forEach(tile => {
+    tile.addEventListener("click", handleTileClick);
+  });
+
+  function handleTileClick(event) {
+    if (haveWinner) return;
+
+    // Get position from HTML data attributes
+    let row = parseInt(event.target.getAttribute("data-row"));
+    let col = parseInt(event.target.getAttribute("data-col"));
+
+    // Guard clause: check if tile is taken
+    if (board[row][col] !== "") {
+      statusMessage.textContent = "Tile is not empty! Pick another spot.";
+      return;
+    }
+
+    // Update board state & HTML UI
+    board[row][col] = currentPlayer.mark;
+    event.target.textContent = currentPlayer.mark;
+    if (currentPlayer.mark === "x") event.target.classList.add("x-mark");
+    if (currentPlayer.mark === "o") event.target.classList.add("o-mark");
+
+    emptyTile--;
+
+    // Check for win condition
     boardStateChecker(board);
-    if(haveWinner)break;
-    if(currentPlayer===player1)currentPlayer=player2;// after the state checker so have a valid record of winner
-    else currentPlayer=player1;
 
+    if (haveWinner) {
+      // Cleanup tile listeners for this round
+      tiles.forEach(t => t.removeEventListener("click", handleTileClick));
+      onRoundEnd(winner);
+      return;
+    }
 
+    if (emptyTile === 0) {
+      statusMessage.textContent = "This is a tie!";
+      tiles.forEach(t => t.removeEventListener("click", handleTileClick));
+      onRoundEnd(null);
+      return;
+    }
+
+    // Swap players after turn
+    if (currentPlayer === player1) currentPlayer = player2;
+    else currentPlayer = player1;
+
+    statusMessage.textContent = `${currentPlayer.name}'s (${currentPlayer.mark}) Turn`;
   }
-  if(!haveWinner){console.log("this is a tie")}
-  function turn(board) {
-  let validMove = false;
 
-      while (!validMove) {
-        let row = prompt(`${currentPlayer.name}'s turn! Enter row (0-2):`);
-        let col = prompt(`${currentPlayer.name}'s turn! Enter col (0-2):`);
-      
-        // Guard against invalid/taken spots
-        if (board[row] && board[row][col] === "") {
-          board[row][col] = currentPlayer.mark;
-          validMove = true; // Breaks the loop and completes the turn!
-        } else {
-          console.log("Invalid spot or tile is already taken! Try again.");
-        }
+  function boardStateChecker(gameBoard) {
+    if (
+       // Rows
+       (gameBoard[0][0] !== "" && gameBoard[0][0] === gameBoard[0][1] && gameBoard[0][1] === gameBoard[0][2]) ||
+       (gameBoard[1][0] !== "" && gameBoard[1][0] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[1][2]) ||
+       (gameBoard[2][0] !== "" && gameBoard[2][0] === gameBoard[2][1] && gameBoard[2][1] === gameBoard[2][2]) ||
+
+       // Columns
+       (gameBoard[0][0] !== "" && gameBoard[0][0] === gameBoard[1][0] && gameBoard[1][0] === gameBoard[2][0]) ||
+       (gameBoard[0][1] !== "" && gameBoard[0][1] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[2][1]) ||
+       (gameBoard[0][2] !== "" && gameBoard[0][2] === gameBoard[1][2] && gameBoard[1][2] === gameBoard[2][2]) ||
+
+       // Diagonals
+       (gameBoard[0][0] !== "" && gameBoard[0][0] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[2][2]) ||
+       (gameBoard[2][0] !== "" && gameBoard[2][0] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[0][2])
+      ) {
+        statusMessage.textContent = "We have a winner! " + currentPlayer.name;
+        haveWinner = true;
+        currentPlayer.score++;
+        winner = currentPlayer;
       }
-
-  emptyTile--;
   }
-  function boardStateChecker(gameBoard){
-    // function to keep an eye on the board 
-      if (
-         // Rows
-         (gameBoard[0][0] !== "" && gameBoard[0][0] === gameBoard[0][1] && gameBoard[0][1] === gameBoard[0][2]) ||
-         (gameBoard[1][0] !== "" && gameBoard[1][0] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[1][2]) ||
-         (gameBoard[2][0] !== "" && gameBoard[2][0] === gameBoard[2][1] && gameBoard[2][1] === gameBoard[2][2]) ||
-
-         // Columns
-         (gameBoard[0][0] !== "" && gameBoard[0][0] === gameBoard[1][0] && gameBoard[1][0] === gameBoard[2][0]) ||
-         (gameBoard[0][1] !== "" && gameBoard[0][1] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[2][1]) ||
-         (gameBoard[0][2] !== "" && gameBoard[0][2] === gameBoard[1][2] && gameBoard[1][2] === gameBoard[2][2]) ||
-
-         // Diagonals
-         (gameBoard[0][0] !== "" && gameBoard[0][0] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[2][2]) ||
-         (gameBoard[2][0] !== "" && gameBoard[2][0] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[0][2])
-        )        {
-                    console.log("We have a winner!"+currentPlayer.name);
-                    haveWinner=true;
-                    currentPlayer.score++;
-                    winner=currentPlayer.name;
-                  }
-
-  }
-
-
 }
+
+// --- Dynamic Best-of-3 / Best-of-5 Game Manager ---
 function gameManager() {
-  let player1 = new player("khadija");
-  let player2 = new player("Sultan");
-  player1.mark = "x";
-  player2.mark = "o";
+  const setupScreen = document.getElementById("player-setup");
+  const gameScreen = document.getElementById("game-screen");
+  const startBtn = document.getElementById("start-btn");
 
-  let currentRound = 1;
-  let maxRounds = 3; // Starts as Best of 3
-  let matchOver = false;
+  const p1NameInput = document.getElementById("player1-name");
+  const p2NameInput = document.getElementById("player2-name");
+  const p1DisplayName = document.getElementById("p1-display-name");
+  const p2DisplayName = document.getElementById("p2-display-name");
+  const p1ScoreDisplay = document.getElementById("p1-score");
+  const p2ScoreDisplay = document.getElementById("p2-score");
+  const roundInfo = document.getElementById("round-info");
 
-  console.log(`Starting Tic-Tac-Toe: ${player1.name} vs ${player2.name}`);
+  startBtn.addEventListener("click", () => {
+    let name1 = p1NameInput.value.trim() || "khadija";
+    let name2 = p2NameInput.value.trim() || "Sultan";
 
-  while (currentRound <= maxRounds && !matchOver) {
-    console.log(`\n--- ROUND ${currentRound} of ${maxRounds} ---`);
-    
-    // Create a fresh board for each round
-    let board = gameBoard();
+    let player1 = new player(name1);
+    let player2 = new player(name2);
+    player1.mark = "x";
+    player2.mark = "o";
 
-    // Play one round (updates scores inside player objects)
-    round(player1, player2, board);
+    p1DisplayName.textContent = player1.name;
+    p2DisplayName.textContent = player2.name;
 
-    // Display running score
-    console.log(`Current Score: ${player1.name}: ${player1.score} | ${player2.name}: ${player2.score}`);
+    setupScreen.classList.add("hidden");
+    gameScreen.classList.remove("hidden");
 
-    // Check Best-of-3 conditions
-    if (maxRounds === 3) {
-      if (player1.score === 2 || player2.score === 2) {
-        matchOver = true;
-        break;
-      }
-      
-      // If tied after 3 rounds, extend to Best of 5
-      if (currentRound === 3 && player1.score === player2.score) {
-        console.log("\n>>> Tied after 3 rounds! Extending match to Best of 5! <<<");
-        maxRounds = 5;
+    let currentRound = 1;
+    let maxRounds = 3;
+
+    function playNextRound() {
+      // Clear board display in HTML
+      document.querySelectorAll(".tile").forEach(t => {
+        t.textContent = "";
+        t.classList.remove("x-mark", "o-mark");
+      });
+
+      p1ScoreDisplay.textContent = player1.score;
+      p2ScoreDisplay.textContent = player2.score;
+      roundInfo.textContent = `Round ${currentRound} of ${maxRounds}`;
+
+      let board = gameBoard();
+
+      // Start round with a callback to process results when a round completes
+      round(player1, player2, board, (winner) => {
+        p1ScoreDisplay.textContent = player1.score;
+        p2ScoreDisplay.textContent = player2.score;
+
+        // Best-of-3 logic
+        if (maxRounds === 3) {
+          if (player1.score === 2 || player2.score === 2) {
+            declareWinner(player1.score === 2 ? player1 : player2);
+            return;
+          }
+          if (currentRound === 3 && player1.score === player2.score) {
+            maxRounds = 5;
+            document.getElementById("status-message").textContent += " Tied! Extended to Best of 5!";
+          }
+        }
+
+        // Best-of-5 logic
+        if (maxRounds === 5) {
+          if (player1.score === 3 || player2.score === 3) {
+            declareWinner(player1.score === 3 ? player1 : player2);
+            return;
+          }
+          if (currentRound === 5) {
+            if (player1.score > player2.score) declareWinner(player1);
+            else if (player2.score > player1.score) declareWinner(player2);
+            else declareWinner(null);
+            return;
+          }
+        }
+
+        currentRound++;
+        setTimeout(playNextRound, 1500);
+      });
+    }
+
+    function declareWinner(finalWinner) {
+      const statusMessage = document.getElementById("status-message");
+      if (finalWinner) {
+        statusMessage.textContent = `🏆 MATCH WINNER: ${finalWinner.name}!`;
+      } else {
+        statusMessage.textContent = "🤝 THE MATCH IS A TIE!";
       }
     }
 
-    // Check Best-of-5 conditions
-    if (maxRounds === 5) {
-      if (player1.score === 3 || player2.score === 3) {
-        matchOver = true;
-        break;
-      }
-    }
-
-    currentRound++;
-  }
-
-  // --- Final Match Result ---
-  console.log("\n===========================");
-  if (player1.score > player2.score) {
-    console.log(`🏆 MATCH WINNER: ${player1.name} (${player1.score} - ${player2.score})`);
-  } else if (player2.score > player1.score) {
-    console.log(`🏆 MATCH WINNER: ${player2.name} (${player2.score} - ${player1.score})`);
-  } else {
-    console.log(`🤝 THE MATCH IS A DRAW! (${player1.score} - ${player2.score})`);
-  }
-  console.log("===========================");
+    playNextRound();
+  });
 }
+
+// Start game listener on page load
+document.addEventListener("DOMContentLoaded", gameManager);
