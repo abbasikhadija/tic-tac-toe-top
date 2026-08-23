@@ -23,7 +23,7 @@ function round(player1,player2,board){
   let currentPlayer=player1;  // to have starting player 
   
   while(emptyTile > 0 && !haveWinner){ // loop runns untill we have a tie or a winner it stops only when the bord is full with no winner or a winner 
-    turn(currentPlayer,board);
+    turn(board);
     boardStateChecker(board);
     if(haveWinner)break;
     if(currentPlayer===player1)currentPlayer=player2;// after the state checker so have a valid record of winner
@@ -32,8 +32,23 @@ function round(player1,player2,board){
 
   }
   if(!haveWinner){console.log("this is a tie")}
-  function turn(currentPlayer,board){
-    emptyTile--;
+  function turn(board) {
+  let validMove = false;
+
+      while (!validMove) {
+        let row = prompt(`${currentPlayer.name}'s turn! Enter row (0-2):`);
+        let col = prompt(`${currentPlayer.name}'s turn! Enter col (0-2):`);
+      
+        // Guard against invalid/taken spots
+        if (board[row] && board[row][col] === "") {
+          board[row][col] = currentPlayer.mark;
+          validMove = true; // Breaks the loop and completes the turn!
+        } else {
+          console.log("Invalid spot or tile is already taken! Try again.");
+        }
+      }
+
+  emptyTile--;
   }
   function boardStateChecker(gameBoard){
     // function to keep an eye on the board 
